@@ -1,0 +1,47 @@
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+  <display-name>Archetype Created Web Application</display-name>
+
+  <servlet>
+    <servlet-name>HelloWorld</servlet-name>
+    <servlet-class>fr.da2i.HelloWorld</servlet-class>
+  </servlet>
+
+  <servlet>
+    <servlet-name>Select</servlet-name>
+    <servlet-class>fr.da2i.Select</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>HelloWorld</servlet-name>
+    <url-pattern>/Public1</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>Select</servlet-name>
+    <url-pattern>/Public2</url-pattern>
+  </servlet-mapping>
+
+  <context-param>
+    <param-name>driver</param-name>
+    <param-value>org.postgresql.Driver</param-value>
+  </context-param>
+
+  <context-param>
+    <param-name>url</param-name>
+    <param-value>jdbc:postgresql://psqlserv/da2i</param-value>
+  </context-param>
+
+  <context-param>
+    <param-name>login</param-name>
+    <param-value>delgranp</param-value>
+  </context-param>
+
+  <context-param>
+    <param-name>mdp</param-name>
+    <param-value>moi</param-value>
+  </context-param>
+</web-app>
