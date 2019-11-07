@@ -77,11 +77,18 @@ public class Select extends HttpServlet
 
 			//On construit la page html
 			out.println("<!doctype html>");
-			out.println("<head><title>Liste des vols:</title></head><body>");
-
+			out.println("<head>");
+			out.println("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">");
+			out.println("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
+			out.println("<link rel=\"stylesheet\" href=\"https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css\">");
+			out.println("<title>Résultat de l'insertion dans la table " + table + "</title>");
+			out.println("</head>");
+			out.println("<body>");
 			out.println("<h1>Table "+ table +" :</h1>");
+			out.println("<div class=\"alert alert-warning\">Requête exécutée : " + query + "</div>");
 
-			out.println("<table>");
+
+			out.println("<table class=\"table table-hover\">");
 			out.println("<thead>");
 			out.println("<tr>");
 
