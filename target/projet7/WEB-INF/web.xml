@@ -32,16 +32,25 @@
 
   <context-param>
     <param-name>url</param-name>
-    <param-value>jdbc:postgresql://psqlserv/da2i</param-value>
+    <!--
+    <param-value>jdbc:postgresql://psqlserv/pierre</param-value>
+    -->
+    <param-value>jdbc:postgresql://localhost:5432/pierre</param-value>
   </context-param>
 
   <context-param>
     <param-name>login</param-name>
+<!--
     <param-value>delgranp</param-value>
+-->
+    <param-value>pierre</param-value>
   </context-param>
 
   <context-param>
     <param-name>mdp</param-name>
+<!--
     <param-value>moi</param-value>
+-->
+    <param-value>free1234</param-value>
   </context-param>
 </web-app>
