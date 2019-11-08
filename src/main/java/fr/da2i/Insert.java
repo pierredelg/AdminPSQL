@@ -14,6 +14,7 @@ import java.sql.*;
  */
 @WebServlet("/servlet-Insert")
 public class Insert extends HttpServlet {
+
     public void doGet(HttpServletRequest req, HttpServletResponse res) {
 
         //On récupere les variables du fichier web.xml
@@ -207,13 +208,13 @@ public class Insert extends HttpServlet {
                 //On constitue la requete select
                 String query = "select * from " + table + ";";
 
-                //On exécute la requete
+                //On prépare la requete
                 PreparedStatement ps = null;
                 if (con != null) {
                     ps = con.prepareStatement(query);
                 }
 
-                //On récupere le résultat
+                //On exécute la requete
                 ResultSet rs = null;
                 if (ps != null) {
                     rs = ps.executeQuery();
