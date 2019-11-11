@@ -33,8 +33,11 @@ public class Update extends HttpServlet {
 
         //On récupere la valeur du parametre table
         String table = req.getParameter("table");
-        if (table == null) {
+        System.out.println("table parameter = " + table);
+        if (table == null || table.isEmpty()) {
             table = (String) session.getAttribute("table");
+            System.out.println("table session = " + table);
+
         } else {
             session.setAttribute("table", table);
         }
@@ -64,36 +67,35 @@ public class Update extends HttpServlet {
         }
 
         try {
-            String query = null;
             String where = "";
+            String set = "";
             for (int i = 1; i <= nombreColonne; i++) {
-                where += nomColonneMap.get(i) + " = " + "\"" + ancienneValeurMap.get(i) + "\" ";
+                set += nomColonneMap.get(i) + " = " + "\'" + req.getParameter("nouvelleValeur" + i) + "\' ";
+                where += nomColonneMap.get(i) + " = " + "\'" + ancienneValeurMap.get(i) + "\' ";
                 if (i != nombreColonne) {
+                    set += " , ";
                     where += " and ";
                 }
             }
-            for (int i = 1; i <= nombreColonne; i++) {
 
-                System.out.println("valeur = " + req.getParameter("nouvelleValeur" + i));
+            //On constitue la requete select
+            String query = "update " + table + " set " + set + " where " + where + ";";
 
-                //On constitue la requete select
-                query = "update " + table + " set " + nomColonneMap.get(i) + " = \"" + req.getParameter("nouvelleValeur" + i) + "\" where " + where + ";";
+            session.setAttribute("requete", query);
 
-                session.setAttribute("requete", query);
+            System.out.println(query);
 
-                System.out.println(query);
-
-                //On exécute la requete
-                PreparedStatement ps = null;
-                if (con != null) {
-                    ps = con.prepareStatement(query);
-                }
-
-                //On récupere le résultat
-                if (ps != null) {
-                    ps.executeUpdate();
-                }
+            //On exécute la requete
+            PreparedStatement ps = null;
+            if (con != null) {
+                ps = con.prepareStatement(query);
             }
+
+            //On récupere le résultat
+            if (ps != null) {
+                ps.executeUpdate();
+            }
+
         } catch (SQLException e) {
             e.getMessage();
         }
@@ -109,7 +111,7 @@ public class Update extends HttpServlet {
         }
         try {
             System.out.println("fin update   table = " + table);
-            resp.sendRedirect(contextPath + "/servlet-Select2?table=\"" + table + "\"");
+            resp.sendRedirect(contextPath + "/servlet-Select?table=" + table + " ");
         } catch (IOException e) {
             e.printStackTrace();
         }

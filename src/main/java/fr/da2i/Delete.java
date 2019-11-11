@@ -27,10 +27,13 @@ public class Delete extends HttpServlet {
 
         //On récupere la valeur du parametre table
         String table = req.getParameter("table");
-        if(table == null) {
+        System.out.println("table parameter = " + table);
+        if (table == null || table.isEmpty()) {
             table = (String) session.getAttribute("table");
-        }else{
-            session.setAttribute("table",table);
+            System.out.println("table session = " + table);
+
+        } else {
+            session.setAttribute("table", table);
         }
         System.out.println(" parametre table = " + table);
         String colonne = req.getParameter("colonne");
@@ -90,7 +93,7 @@ public class Delete extends HttpServlet {
         }
 
         try {
-            resp.sendRedirect(contextPath + "/servlet-Select2?table=\"" + table + "\"");
+            resp.sendRedirect(contextPath + "/servlet-Select?table=" + table + " ");
         } catch (IOException e) {
             e.printStackTrace();
         }

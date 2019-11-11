@@ -28,11 +28,19 @@ public class Insert extends HttpServlet {
         String driver = getServletContext().getInitParameter("driver");
         String contextPath = req.getContextPath();
 
-        //On récupere la valeur des parametres
-        String table = req.getParameter("table");
-
         //Session
         HttpSession session = req.getSession(true);
+
+        //On récupere la valeur des parametres
+        String table = req.getParameter("table");
+        System.out.println("table parameter = " + table);
+        if (table == null || table.isEmpty()) {
+            table = (String) session.getAttribute("table");
+            System.out.println("table session = " + table);
+
+        } else {
+            session.setAttribute("table", table);
+        }
 
         Integer nombreColonne = (Integer) session.getAttribute("nombreColonne");
 
@@ -84,7 +92,7 @@ public class Insert extends HttpServlet {
                 ps.executeUpdate();
             }
 
-            res.sendRedirect(contextPath + "/servlet-Select2?table=\"" + table + "\"");
+            res.sendRedirect(contextPath + "/servlet-Select?table=" + table + " ");
 
         } catch (SQLException | IOException e) {
             System.err.println(e.getMessage());
