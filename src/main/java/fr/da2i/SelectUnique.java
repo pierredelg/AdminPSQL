@@ -20,6 +20,7 @@ public class SelectUnique extends HttpServlet
         String nom = getServletContext().getInitParameter("login");
         String mdp = getServletContext().getInitParameter("mdp");
         String driver = getServletContext().getInitParameter("driver");
+        String contextPath = req.getContextPath();
 
         //On récupere la valeur du parametre table
         String table = req.getParameter("table");
@@ -78,7 +79,7 @@ public class SelectUnique extends HttpServlet
             res.setContentType("text/html;charset=UTF-8");
 
             //On construit la page html
-            introHtml(out,"Information sur la table",table,query,rs,nombreColonne,metaData);
+            introHtml(out,"Information sur la table",table,query,rs,nombreColonne,metaData,contextPath);
 
         }catch(SQLException | IOException e){
             System.err.println(e.getMessage());
@@ -102,6 +103,7 @@ public class SelectUnique extends HttpServlet
         String nom = getServletContext().getInitParameter("login");
         String mdp = getServletContext().getInitParameter("mdp");
         String driver = getServletContext().getInitParameter("driver");
+        String contextPath = req.getContextPath();
 
 
         //On récupere la valeur des parametres
@@ -182,7 +184,7 @@ public class SelectUnique extends HttpServlet
             res.setContentType("text/html;charset=UTF-8");
 
             //On construit la page html
-            introHtml(out,"Résultat de l'insertion dans la table",table,queryInsert,rs,nombreColonne,metaData);
+            introHtml(out,"Information sur la table",table,queryInsert,rs,nombreColonne,metaData,contextPath);
 
         } catch (SQLException | IOException e) {
             System.err.println(e.getMessage());
@@ -199,64 +201,77 @@ public class SelectUnique extends HttpServlet
             System.err.println(e.getMessage());
         }
     }
-    public void introHtml(PrintWriter out,String title,String table, String query ,ResultSet rs,int nombreColonne,ResultSetMetaData metaData){
+    public void introHtml(PrintWriter out,String title,String table, String query ,ResultSet rs,int nombreColonne,ResultSetMetaData metaData,String contextPath){
 
         try{
             //On construit la page html
             out.println("<!doctype html>");
+
             out.println("<head>");
             out.println("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">");
             out.println("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
             out.println("<link rel=\"stylesheet\" href=\"https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css\">");
             out.println("<title>"+ title + " " + table + "</title>");
             out.println("</head>");
+
             out.println("<body class=\"container\">");
 
-            out.println("<h1>Table "+ table +" :</h1>");
+            out.println("<h1 class=\"text-secondary text-center\">Affichage de la table "+ table.toUpperCase() +" :</h1>");
+
             out.println("<div class=\"alert alert-warning\">Requête exécutée : " + query + "</div>");
 
-            out.println("<form class=\"align-items-center\" action=\"http://localhost:8080/projet7/servlet-SelectUnique\" method=\"post\">");
-            out.println("<table class=\"table table-hover\">");
-            out.println("<thead class=\"thead-light\">");
-            out.println("<tr class=\"row\">");
+            out.println("<table class=\"table table-hover table-bordered table-striped card card-cascade narrower\">");
+            out.println("<tr class=\"thead-dark\" scope=\"row\">");
+
+            String valeur = null, colonne = null;
 
             //On affiche le titre des colonnes de la table
             for(int i = 1;i <= nombreColonne;i++) {
-                out.println("<th class=\"col text-center\">" + metaData.getColumnName(i).toUpperCase() + "</th>");
+                if(i == 1){
+                    colonne = metaData.getColumnName(i).toUpperCase();
+                }
+                out.println("<th class=\"text-center align-middle\">" + metaData.getColumnName(i).toUpperCase() + "</th>");
             }
-            out.println("<th class=\"col\"></th>");
+            out.println("<th class=\"text-center align-middle\"> ACTIONS</th>");
 
             out.println("</tr>");
-            out.println("</thead>");
-            out.println("<tbody>");
-
             while(rs != null && rs.next()){
-                out.println("<tr class=\"row\">");
+                out.println("<tr scope=\"row\">");
                 for(int i = 1;i <= nombreColonne;i++){
-                    out.println("<td class=\"col text-center\">"+ rs.getObject(i) +"</td>");
+                    if(i == 1){
+                        valeur = rs.getObject(i).toString();
+                    }
+                    out.println("<td class=\"text-center align-middle\" scope=\"col\">"+ rs.getObject(i) +"</td>");
                 }
-                out.println("<td class=\"col\"></td>");
+                out.println("<td class=\"d-flex flex-row\" scope=\"col\"><form action=\""+ contextPath + "/UpdateForm.html\" method=\"post\">" +
+                        "<input type=\"hidden\" id=\"table\" name=\"table\" value=\"" + table + "\"/>"+
+                        "<input type=\"hidden\" id=\"colonne\" name=\"colonne\" value=\"" + colonne + "\"/>"+
+                        "<input type=\"hidden\" id=\"valeur\" name=\"valeur\" value=\"" + valeur + "\"/>"+
+                        "<input class=\"btn btn-warning m-1 waves-effect btn-rounded\" type=\"submit\" value=\"Modifier\"/></form>" +
+                        "<form action=\""+ contextPath +"/servlet-Delete\" method=\"post\">" +
+                        "<input type=\"hidden\" id=\"table\" name=\"table\" value=\"" + table + "\"/>"+
+                        "<input type=\"hidden\" id=\"colonne\" name=\"colonne\" value=\"" + colonne + "\"/>"+
+                        "<input type=\"hidden\" id=\"valeur\" name=\"valeur\" value=\"" + valeur + "\"/>"+
+                        "<input class=\"btn btn-danger m-1\" type=\"submit\" value=\"Supprimer\"/></form></td>");
                 out.println("</tr>");
             }
-            out.println("<tr class=\"row\">");
+            out.println("<tr scope=\"row\">");
+            out.println("<form class=\"align-items-center\" action=\"/servlet-SelectUnique\" method=\"post\">");
+
 
             for (int i = 1; i <= nombreColonne; i++) {
 
-                out.println("<td class=\"col\"><input class=\"form-control\" type=\"text\" id=\"value" + i +
+                out.println("<td class=\"text-center align-middle\" scope=\"col\"><input class=\"form-control\" type=\"text\" id=\"value" + i +
                         "\" name=\"valeur" + i + "\"/></td>");
 
             }
-            out.println("<td class=\"col\"><input class=\"btn btn-primary\" type=\"submit\" value=\"Valider\"/></td>\n");
-            out.println("</tr>");
-            out.println(" </tbody>");
-            out.println("</table>");
-
-
             out.println("<input type=\"hidden\" id=\"table\" name=\"table\" value=\"" + table + "\"/>");
             out.println("<input type=\"hidden\" id=\"nombreColonne\" name=\"nombreColonne\" value=\"" +
                     nombreColonne + "\"/>");
-
+            out.println("<td class=\"text-center align-middle\" scope=\"col\"><input class=\"btn btn-primary\" type=\"submit\" value=\"Enregistrer\"/></td>\n");
             out.println("</form>");
+            out.println("</tr>");
+            out.println("</table>");
             out.println("</body>");
             out.println("</html>");
 
