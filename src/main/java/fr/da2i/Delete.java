@@ -8,12 +8,15 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.*;
 
+/**
+ * Servlet permettant de supprimer une ligne dans une table
+ * en renseignant le nom de la table en parametre (table=nomDeLaTable)
+ * @author DELGRANGE Pierre
+ */
 @WebServlet("/servlet-Delete")
 public class Delete extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp){
-
-        System.out.println("SERVLET DELETE");
 
         //On récupere les variables du fichier web.xml
         String url = getServletContext().getInitParameter("url");
@@ -27,26 +30,20 @@ public class Delete extends HttpServlet {
 
         //On récupere la valeur du parametre table
         String table = req.getParameter("table");
-        System.out.println("table parameter = " + table);
         if (table == null || table.isEmpty()) {
             table = (String) session.getAttribute("table");
-            System.out.println("table session = " + table);
 
         } else {
             session.setAttribute("table", table);
         }
-        System.out.println(" parametre table = " + table);
+
         String colonne = req.getParameter("colonne");
-        System.out.println(" parametre colonne = " + colonne);
         String valeur = req.getParameter("valeur");
-        System.out.println(" parametre valeur = " + valeur);
-
-
         try{
             //On charge le driver
             Class.forName(driver);
         }catch(ClassNotFoundException e){
-            e.getMessage();
+            System.err.println(e.getMessage());
         }
 
         Connection con = null;
@@ -55,7 +52,7 @@ public class Delete extends HttpServlet {
             //On ouvre la connexion
             con = DriverManager.getConnection(url,nom,mdp);
         }catch(SQLException e){
-            e.getMessage();
+            System.err.println(e.getMessage());
         }
 
         try{
@@ -64,8 +61,6 @@ public class Delete extends HttpServlet {
             String query = "delete from " + table + " where "+ colonne + " = \'" + valeur + "\' ;";
 
             session.setAttribute("requete",query);
-
-            System.out.println(query);
 
             //On exécute la requete
             PreparedStatement ps = null;
@@ -79,7 +74,7 @@ public class Delete extends HttpServlet {
             }
 
         }catch(SQLException e){
-            e.getMessage();
+            System.err.println(e.getMessage());
         }
 
         try{
@@ -89,13 +84,13 @@ public class Delete extends HttpServlet {
             }
 
         }catch(SQLException e){
-            e.getMessage();
+            System.err.println(e.getMessage());
         }
 
         try {
             resp.sendRedirect(contextPath + "/servlet-Select?table=" + table + " ");
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
 
 

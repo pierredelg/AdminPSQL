@@ -12,13 +12,16 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Map;
 
+/**
+ * Servlet permettant de modifier le contenu d'une table
+ * en renseignant le nom de la table en parametre (table=nomDeLaTable)
+ * @author DELGRANGE Pierre
+ */
 @WebServlet("/servlet-Update")
 public class Update extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) {
-
-        System.out.println("SERVLET UPDATE");
 
         //On récupere les variables du fichier web.xml
         String url = getServletContext().getInitParameter("url");
@@ -30,31 +33,25 @@ public class Update extends HttpServlet {
         //Session
         HttpSession session = req.getSession(true);
 
-
         //On récupere la valeur du parametre table
         String table = req.getParameter("table");
-        System.out.println("table parameter = " + table);
+
         if (table == null || table.isEmpty()) {
             table = (String) session.getAttribute("table");
-            System.out.println("table session = " + table);
-
         } else {
             session.setAttribute("table", table);
         }
 
         int nombreColonne = (int) session.getAttribute("nombreColonne");
-        System.out.println("Nombre de colonne " + nombreColonne);
 
         Map<Integer, String> nomColonneMap = (Map<Integer, String>) session.getAttribute("nomColonneMap");
-        System.out.println(nomColonneMap);
         Map<Integer, String> ancienneValeurMap = (Map<Integer, String>) session.getAttribute("ancienneValeurMap");
-        System.out.println(ancienneValeurMap);
 
         try {
             //On charge le driver
             Class.forName(driver);
         } catch (ClassNotFoundException e) {
-            e.getMessage();
+            System.err.println(e.getMessage());
         }
 
         Connection con = null;
@@ -63,7 +60,7 @@ public class Update extends HttpServlet {
             //On ouvre la connexion
             con = DriverManager.getConnection(url, nom, mdp);
         } catch (SQLException e) {
-            e.getMessage();
+            System.err.println(e.getMessage());
         }
 
         try {
@@ -83,8 +80,6 @@ public class Update extends HttpServlet {
 
             session.setAttribute("requete", query);
 
-            System.out.println(query);
-
             //On exécute la requete
             PreparedStatement ps = null;
             if (con != null) {
@@ -97,7 +92,7 @@ public class Update extends HttpServlet {
             }
 
         } catch (SQLException e) {
-            e.getMessage();
+            System.err.println(e.getMessage());
         }
 
         try {
@@ -107,13 +102,12 @@ public class Update extends HttpServlet {
             }
 
         } catch (SQLException e) {
-            e.getMessage();
+            System.err.println(e.getMessage());
         }
         try {
-            System.out.println("fin update   table = " + table);
             resp.sendRedirect(contextPath + "/servlet-Select?table=" + table + " ");
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
 
 

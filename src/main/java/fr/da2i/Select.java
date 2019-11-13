@@ -11,13 +11,18 @@ import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 
+
+/**
+ * Servlet permettant d'afficer le contenu d'une table
+ * en renseignant le nom de la table en parametre (table=nomDeLaTable)
+ * Avec la possibilité de modifier ou supprimer ses valeurs
+ * mais aussi l'insertion de nouvelles données.
+ * @author DELGRANGE Pierre
+ */
 @WebServlet("/servlet-Select")
 public class Select extends HttpServlet {
 
     public void doGet(HttpServletRequest req, HttpServletResponse res ) {
-
-        System.out.println("SERVLET Select GET");
-
 
         //On récupere les variables du fichier web.xml
         String url = getServletContext().getInitParameter("url");
@@ -36,8 +41,6 @@ public class Select extends HttpServlet {
         }else{
             session.setAttribute("table",table);
         }
-        System.out.println("table = " + table);
-
 
         String requete = (String) session.getAttribute("requete");
 
@@ -48,14 +51,11 @@ public class Select extends HttpServlet {
         }
         session.setAttribute("numeroDeLigneUpdate",numeroDeLigneUpdate);
 
-        System.out.println("requete = " + requete);
-
-
         try{
             //On charge le driver
             Class.forName(driver);
         }catch(ClassNotFoundException e){
-            e.getMessage();
+            System.err.println(e.getMessage());
         }
 
         Connection con = null;
@@ -68,13 +68,8 @@ public class Select extends HttpServlet {
         }
 
         try{
-
-
-
             //On constitue la requete select
             String query = "select * from " + table + ";";
-
-            System.out.println(query);
 
             //On exécute la requete
             PreparedStatement ps = null;
@@ -197,12 +192,16 @@ public class Select extends HttpServlet {
                         out.println("<input class=\"form-control\" type=\"text\" id=\"nouvelleValeur" + i + "\"");
                         out.println("name=\"nouvelleValeur" + i + "\" value=" + valeur + " />");
                         out.println("</td>");
-                        ancienneValeurMap.put(i, valeur.toString());
+                        if(valeur != null) {
+                            ancienneValeurMap.put(i, valeur.toString());
+                        }
                         updateOk = true;
 
                     } else {
                         if (i == 1) {
-                            valeurDel = valeur.toString();
+                            if(valeur != null) {
+                                valeurDel = valeur.toString();
+                            }
                         }
                         out.println("<td class=\"text-center align-middle\" scope=\"col\">" + valeur + "</td>");
                     }
