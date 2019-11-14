@@ -33,9 +33,8 @@ public class Update extends HttpServlet {
         //Session
         HttpSession session = req.getSession(true);
 
-        //On récupere la valeur du parametre table
+        //On récupere la valeur des parametres et des valeurs misent en session
         String table = req.getParameter("table");
-
         if (table == null || table.isEmpty()) {
             table = (String) session.getAttribute("table");
         } else {
@@ -43,7 +42,6 @@ public class Update extends HttpServlet {
         }
 
         int nombreColonne = (int) session.getAttribute("nombreColonne");
-
         Map<Integer, String> nomColonneMap = (Map<Integer, String>) session.getAttribute("nomColonneMap");
         Map<Integer, String> ancienneValeurMap = (Map<Integer, String>) session.getAttribute("ancienneValeurMap");
 
@@ -67,7 +65,9 @@ public class Update extends HttpServlet {
             String where = "";
             String set = "";
             for (int i = 1; i <= nombreColonne; i++) {
+                //Pour chaque colonne on ajoute la nouvelle valeur dans le set
                 set += nomColonneMap.get(i) + " = " + "\'" + req.getParameter("nouvelleValeur" + i) + "\' ";
+                //et la vérification de l'ancienne valeur dans la clause where
                 where += nomColonneMap.get(i) + " = " + "\'" + ancienneValeurMap.get(i) + "\' ";
                 if (i != nombreColonne) {
                     set += " , ";

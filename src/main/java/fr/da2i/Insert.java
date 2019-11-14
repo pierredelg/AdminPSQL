@@ -31,7 +31,7 @@ public class Insert extends HttpServlet {
         //Session
         HttpSession session = req.getSession(true);
 
-        //On récupere la valeur des parametres
+        //On récupere la valeur des parametres et des valeurs misent en session
         String table = req.getParameter("table");
         if (table == null || table.isEmpty()) {
             table = (String) session.getAttribute("table");

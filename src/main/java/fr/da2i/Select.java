@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 
@@ -34,7 +35,7 @@ public class Select extends HttpServlet {
         //Session
         HttpSession session = req.getSession(true);
 
-        //On récupere la valeur des parametres
+        //On récupere la valeur des parametres et des valeurs misent en session
         String table = req.getParameter("table");
         if(table == null || table.isEmpty()) {
             table = (String) session.getAttribute("table");
@@ -42,14 +43,14 @@ public class Select extends HttpServlet {
             session.setAttribute("table",table);
         }
 
-        String requete = (String) session.getAttribute("requete");
-
         String numeroDeLigne = req.getParameter("numeroDeLigneUpdate");
         int numeroDeLigneUpdate = 0;
         if(numeroDeLigne != null) {
             numeroDeLigneUpdate = Integer.parseInt(numeroDeLigne);
         }
         session.setAttribute("numeroDeLigneUpdate",numeroDeLigneUpdate);
+
+        String requete = (String) session.getAttribute("requete");
 
         try{
             //On charge le driver
@@ -174,11 +175,12 @@ public class Select extends HttpServlet {
             out.println("<th class=\"text-center align-middle\"> ACTIONS</th>");
             out.println("</tr>");
 
-
             Map<Integer,String> ancienneValeurMap = new HashMap<>();
 
             //CONTENU DU TABLEAU
             while(rs != null && rs.next()){
+
+                Map<Integer,String> valeurLigneMap = new HashMap<>();
                 out.println("<tr scope=\"row\">");
                 numeroDeLigne++;
                 for(int i = 1;i <= nombreColonne;i++) {
@@ -198,15 +200,14 @@ public class Select extends HttpServlet {
                         updateOk = true;
 
                     } else {
-                        if (i == 1) {
-                            if(valeur != null) {
-                                valeurDel = valeur.toString();
-                            }
+                        if (valeur != null) {
+                            valeurLigneMap.put(i, valeur.toString());
                         }
                         out.println("<td class=\"text-center align-middle\" scope=\"col\">" + valeur + "</td>");
                     }
                 }
                 session.setAttribute("ancienneValeurMap",ancienneValeurMap);
+
                 /*DERNIERE COLONNE DU TABLEAU (BOUTTONS) */
                 out.println("<td class=\"d-flex flex-row\" scope=\"col\">");
 
@@ -219,8 +220,8 @@ public class Select extends HttpServlet {
                     out.println("</form>");
                     /*BOUTON ANNULER*/
                     out.println("<form action=\""+ contextPath +"/servlet-Select\" method=\"get\">" );
-                    out.println(  "<input type=\"hidden\" id=\"table\" name=\"table\" value=\"" + table + "\"/>");
-                    out.println(  "<input class=\"btn btn-danger m-1\" type=\"submit\" value=\"Annuler\"/>");
+                    out.println("<input type=\"hidden\" id=\"table\" name=\"table\" value=\"" + table + "\"/>");
+                    out.println("<input class=\"btn btn-danger m-1\" type=\"submit\" value=\"Annuler\"/>");
                     out.println("</form>");
                     out.println("</td>");
                 }else{
@@ -233,10 +234,14 @@ public class Select extends HttpServlet {
 
                     /*BOUTON SUPPRIMER*/
                     out.println("<form action=\""+ contextPath +"/servlet-Delete\" method=\"post\">" );
-                    out.println(  "<input type=\"hidden\" id=\"table\" name=\"table\" value=\"" + table + "\"/>");
-                    out.println( "<input type=\"hidden\" id=\"colonne\" name=\"colonne\" value=\"" + colonneId + "\"/>");
-                    out.println(  "<input type=\"hidden\" id=\"valeur\" name=\"valeur\" value=\"" + valeurDel + "\"/>");
-                    out.println(  "<input class=\"btn btn-danger m-1\" type=\"submit\" value=\"Supprimer\"/>");
+                    out.println("<input type=\"hidden\" id=\"table\" name=\"table\" value=\"" + table + "\"/>");
+                    //On ajoute les valeurs de la ligne
+                    Iterator<Map.Entry<Integer, String>> iterator = valeurLigneMap.entrySet().iterator();
+                    while(iterator.hasNext()){
+                        Map.Entry<Integer, String> entry = iterator.next();
+                        out.println("<input type=\"hidden\" id=\"valeur"+ entry.getKey() +"\" name=\"valeur"+ entry.getKey() +"\" value=\"" + entry.getValue() + "\"/>");
+                    }
+                    out.println("<input class=\"btn btn-danger m-1\" type=\"submit\" value=\"Supprimer\"/>");
                     out.println("</form>");
                     out.println("</td>");
                 }
