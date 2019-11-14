@@ -75,9 +75,10 @@ public class Update extends HttpServlet {
                 }
             }
 
-            //On constitue la requete select
+            //On constitue la requete update
             String query = "update " + table + " set " + set + " where " + where + ";";
 
+            //On ajoute la requete en session
             session.setAttribute("requete", query);
 
             //On exécute la requete

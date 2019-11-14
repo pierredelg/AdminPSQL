@@ -102,8 +102,8 @@ public class Select extends HttpServlet {
             //On ajoute le type de contenu
             res.setContentType("text/html;charset=UTF-8");
 
+            //On construit la page html
             if(requete != null) {
-                //On construit la page html
                 introHtml(out, "Information sur la table", table, requete, rs, nombreColonne, metaData, contextPath,session);
             }
             else{
@@ -149,7 +149,6 @@ public class Select extends HttpServlet {
             /*H1*/
             out.println("<h1 class=\"text-secondary text-center\">Affichage de la table "+ table.toUpperCase() +" :</h1>");
 
-
             /*AFFICHAGE REQUETE*/
             out.println("<div class=\"alert alert-warning\">Dernière requête exécutée : " + query + "</div>");
 
@@ -167,6 +166,7 @@ public class Select extends HttpServlet {
                     colonneId = nomColonne;
                 }
                 out.println("<th class=\"text-center align-middle\">" + nomColonne.toUpperCase() + "</th>");
+                //On ajoute les titres de la colonne dans la hashmap
                 nomColonneMap.put(i,nomColonne);
             }
             session.setAttribute("nomColonneMap",nomColonneMap);
@@ -183,15 +183,15 @@ public class Select extends HttpServlet {
                 numeroDeLigne++;
                 for(int i = 1;i <= nombreColonne;i++) {
                     Object valeur = rs.getObject(i);
+                    //Si le numéro de la ligne correspond à la ligne selectionnée pour l'update
                     if (numeroDeLigne == (int) session.getAttribute("numeroDeLigneUpdate")) {
-
-                        out.println("<form class=\"align-items-center\" action=\"" + contextPath + "/servlet-Update\" method=\"post\">");
-
                         /*FORMULAIRE D'UPDATE*/
+                        out.println("<form class=\"align-items-center\" action=\"" + contextPath + "/servlet-Update\" method=\"post\">");
                         out.println("<td class=\"text-center align-middle\" scope=\"col\">");
                         out.println("<input class=\"form-control\" type=\"text\" id=\"nouvelleValeur" + i + "\"");
                         out.println("name=\"nouvelleValeur" + i + "\" value=" + valeur + " />");
                         out.println("</td>");
+                        //On ajoute les valeurs de la ligne dans la hashmap
                         if(valeur != null) {
                             ancienneValeurMap.put(i, valeur.toString());
                         }
@@ -210,6 +210,7 @@ public class Select extends HttpServlet {
                 /*DERNIERE COLONNE DU TABLEAU (BOUTTONS) */
                 out.println("<td class=\"d-flex flex-row\" scope=\"col\">");
 
+                //aprés le bouton modifier
                 if(updateOk) {
                     /*BOUTON ENREGISTRER UPDATE*/
                     out.println("<input type=\"hidden\" id=\"table\" name=\"table\" value=\"" + table + "\"/>");
@@ -265,8 +266,6 @@ public class Select extends HttpServlet {
             out.println("</table>");
             out.println("</body>");
             out.println("</html>");
-
-            updateOk = false;
 
         } catch (SQLException e) {
             System.err.println(e.getMessage());

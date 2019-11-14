@@ -58,7 +58,7 @@ public class Insert extends HttpServlet {
         }
 
         try {
-            //On constitue la requete select
+            //On constitue la requete insert
             String requeteSQL = "insert into " + table + " values( ";
             for (int i = 1; i <= nombreColonne; i++) {
                 String valeur = req.getParameter("valeur" + i);
@@ -69,6 +69,7 @@ public class Insert extends HttpServlet {
             }
             requeteSQL += ");";
 
+            //On ajoute la requete en session
             session.setAttribute("requete",requeteSQL);
 
             //On exécute la requete

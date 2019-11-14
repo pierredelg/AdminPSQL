@@ -57,9 +57,10 @@ public class Delete extends HttpServlet {
 
         try{
 
-            //On constitue la requete select
+            //On constitue la requete delete
             String query = "delete from " + table + " where "+ colonne + " = \'" + valeur + "\' ;";
 
+            //On ajoute la requete en session
             session.setAttribute("requete",query);
 
             //On exécute la requete
@@ -70,7 +71,7 @@ public class Delete extends HttpServlet {
 
             //On récupere le résultat
             if (ps != null) {
-                ps.executeQuery();
+                ps.executeUpdate();
             }
 
         }catch(SQLException e){
