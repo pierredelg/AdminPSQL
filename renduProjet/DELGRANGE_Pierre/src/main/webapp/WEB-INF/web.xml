@@ -11,7 +11,7 @@
 
   <context-param>
     <param-name>url</param-name>
-    <param-value>jdbc:postgresql://psqlserv/da2i</param-value>
+    <param-value>jdbc:postgresql://psqlserv/da2iz</param-value>
   </context-param>
 
   <context-param>
